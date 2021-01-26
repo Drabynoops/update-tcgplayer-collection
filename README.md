@@ -14,10 +14,11 @@ TCGPLAYER_EMAIL - The email you use to log into tcgplayer.com
 TCGPLAYER_PASSWORD = Your password 
 SLEEP_TIME = The amount (in seconds) to wait for the page to load/accept input. Likes to lag especially on the log in screen
 
-What is does: Logs you in using the link that will bring you straight to your TCGPlayer collection tracker. Clicks the add "Add Products to Collection" tab. Reads the csv file and searchs for and adds cards based on information provided. This is important, if the information is bad, it won't add them or it will add them incorrectly. 
+What is does: Logs you in using the link that will bring you straight to your TCGPlayer collection tracker. Clicks the add "Add Products to Collection" tab. Reads the csv file and searchs for and adds cards based on information provided. This is important, if the information is bad, it won't add them or it will add them incorrectly. For cards that fail to get added it creates a new CSV that can be used to manually enter the data or refine the search later
 
 Note: Etched cards and extended cards currently have to be manually added to the card name. 
 
 Potential improvements: 
 Adding fields for extended and etched cards that automatically add them to the card name.
+Add functionality to automatically search for cards in the correct set and further reduce error ratio.
 Add a field to change with game/product type to search for.
