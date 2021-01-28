@@ -6,10 +6,10 @@ from selenium.webdriver.common.action_chains import ActionChains
 from time import sleep
 import pandas
 
-chrome_driver_path = "{path}chromedriver.exe"
+chrome_driver_path = "{path}}\chromedriver.exe"
 TCGPLAYER_EMAIL = "email@email.com"
 TCGPLAYER_PASSWORD = "password"
-SLEEP_TIME = 5 #Varies with internet speed. 5 is default
+SLEEP_TIME = 3 #Varies with internet speed. 5 is default
 
 class TcgplayerCollectionAdder:
     def __init__(self):
@@ -45,9 +45,20 @@ class TcgplayerCollectionAdder:
 
         for card_index in self.card_data:
             card = self.card_data[card_index]
+
+            game = Select(self.driver.find_element_by_xpath('//form[@id="addProductsForm"]/div/select[@id="categoryid"]'))
+            game.select_by_visible_text(card['Game']) #TODO: Add category
+            sleep(SLEEP_TIME)
+
+            set_ = Select(self.driver.find_element_by_xpath('//form[@id="addProductsForm"]/div/select[@id="setNameId"]'))
+            set_.select_by_visible_text(card['Set'])
+            sleep(SLEEP_TIME)
+
+            input_box = self.driver.find_element_by_id("addProductSearchTerm")
             input_box.clear()
             input_box.send_keys(card['Card Name'])
             sleep(SLEEP_TIME)
+            
             search_name = card['Card Name'] + " - [Foil]" if card['Foil'] else card['Card Name']
 
             results_table = self.driver.find_element_by_id("resultsTable")
@@ -57,8 +68,7 @@ class TcgplayerCollectionAdder:
             for row in table_rows:
                 have_up_arrow = row.find_element_by_class_name("CollectionUpArrow")
                 card_name = row.find_element_by_xpath('td[4]/a').text
-                set_name = row.find_element_by_xpath('td[5]').text
-                if card_name == search_name and set_name == card['Set']:
+                if card_name == search_name:
                     for _ in range(card['Quantity']):
                         have_up_arrow.click()
                     card_found = True
@@ -71,8 +81,11 @@ class TcgplayerCollectionAdder:
         df = pandas.DataFrame(errors)
         df.to_csv("error_cards.csv", index=False)
 
+    def close(self):
+        self.driver.quit()
 
 collection_adder = TcgplayerCollectionAdder()
 collection_adder.login()
 collection_adder.get_card_data()
 collection_adder.add_cards_to_collection()
+collection_adder.close()
